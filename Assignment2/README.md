@@ -6,7 +6,7 @@ There's the client- and server sides which communicate with each other through t
 ## How to run the assignment 2
 Locate yourself in the /Assignment2 folder & open two terminals and run:
 - ```$ python server.py``` on the other and
-- ```$ python client.py```
+- ```$ python client.py``` on the other terminal
 
 ## Basic features
 Client:
