@@ -30,6 +30,7 @@ def handle_client(client_socket, address):
     nickname_message = client_socket.recv(1024).decode()
     nickname = nickname_message.split(':')[0].strip()
 
+    # making sure that nicknames are unique
     if nickname in clients:
         client_socket.send("Nickname already taken. Please reconnect with a different nickname.".encode())
         client_socket.close()
@@ -73,32 +74,37 @@ def handle_client(client_socket, address):
                     current_channel = new_channel  
                 else:
                     client_socket.send("Invalid /join command format. Usage: /join channel_name".encode())
+            
+            # sending the message to all the clients in the current channel
             else:
                 broadcast(current_channel, f"{nickname}: {message}", client_socket)
         except:
             remove_client("general", nickname)
             break
 
+# sending a private message
 def send_dm(nickname, recipient, dm_message):
-    # searching the user & if it's only
+    # searching the user if its online
     if recipient in clients:
 
         # user cannot dm theirselves
         if recipient != nickname:
             try:
-                clients[recipient].send(f'(DM) {nickname}: {dm_message}'.encode())
-                clients[nickname].send(f'Sent DM to {recipient}: {dm_message}'.encode())
+                clients[recipient].send(f'\n(DM) {nickname}: {dm_message}\n'.encode())
+                clients[nickname].send(f'\n*** Sent DM to {recipient}: {dm_message}\n ***'.encode())
             except:
-                clients[nickname].send(f"Failed to send DM to {recipient}.".encode())
+                clients[nickname].send(f"\n*** Failed to send DM to {recipient}. ***\n".encode())
         else:
-            clients[nickname].send("You cannot send a direct message to yourself.".encode())
+            clients[nickname].send("\n *** You cannot send a direct message to yourself. ***\n".encode())
     else: 
-        client_socket.send("User not found or offline.".encode())
+        client_socket.send("\n ** User not found or offline. *** \n".encode())
 
 # sending the message to all the (connected) clients except the message sender
 def broadcast(channel, message, sender_socket):
     for user in channels[channel]:
         if clients[user] != sender_socket:
+
+            # sending the message to client(s) & removing the client if it cannot be sent
             try:
                 clients[user].send(message.encode())
             except:
@@ -111,9 +117,14 @@ def remove_client(channel, nickname):
         broadcast(channel, f"{nickname} has left the chat.", None)
         del clients[nickname]
 
+# adding client to a channel
 def join_channel(channel, nickname):
+
+    # the channel is created if its not already
     if channel not in channels:
         channels[channel] = []
+
+    # adding the client to the channel
     if nickname not in channels[channel]:
         channels[channel].append(nickname)
         channels["general"].remove(nickname)

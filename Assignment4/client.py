@@ -14,7 +14,7 @@ client_socket.connect((HOST, PORT))
 print("write '/quit' to quit,\n '/join *channelname*' to join a channel,\n and '/dm *nickname* *message*' to send a private message \n")
 nickname = input("Enter your nickname (and press enter to continue): ")
 
-# Send the nickname to the server
+# Sending the nickname to the server
 client_socket.send(f"{nickname}: ".encode())
 
 # Initializing current channel to "general"
