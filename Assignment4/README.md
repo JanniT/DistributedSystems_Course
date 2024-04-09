@@ -1,6 +1,6 @@
 # Assignment 4
 
-The task in this assignment was to create a multi-user chat system that uses socket technology. The system consists of a sesrver and several clients.
+The task in this assignment was to create a multi-user chat system that uses socket technology. The system consists of a server and it supports several clients.
 
 ## How to run the assignment 4
 Locate yourself in the /Assignment2 folder & open two terminals and run:
