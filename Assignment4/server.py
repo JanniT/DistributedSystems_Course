@@ -17,7 +17,7 @@ server_socket.listen()
 
 print(f"Server listening on {HOST}:{PORT}")
 
-# dictionary for saving the connecyed client(s) 
+# dictionary for saving the connected client(s) 
 clients = {}
 
 # dictionary for storing channels and their connected clients
@@ -62,7 +62,7 @@ def handle_client(client_socket, address):
                     recipient, dm_message = parts[1], parts[2]
                     send_dm(nickname, recipient, dm_message)
                 else:
-                    client_socket.send("Invalid /dm command format. Usage: /dm *nickname* *message*".encode())
+                    client_socket.send("\nInvalid /dm command format. Usage: /dm *nickname* *message*".encode())
 
             # check for the channel joining
             elif message.startswith('/join'):
@@ -73,7 +73,7 @@ def handle_client(client_socket, address):
                     # Update current channel
                     current_channel = new_channel  
                 else:
-                    client_socket.send("Invalid /join command format. Usage: /join channel_name".encode())
+                    client_socket.send("\nInvalid /join command format. Usage: /join channel_name".encode())
             
             # sending the message to all the clients in the current channel
             else:
@@ -90,14 +90,14 @@ def send_dm(nickname, recipient, dm_message):
         # user cannot dm theirselves
         if recipient != nickname:
             try:
-                clients[recipient].send(f'\n(DM) {nickname}: {dm_message}\n'.encode())
-                clients[nickname].send(f'\n*** Sent DM to {recipient}: {dm_message}\n ***'.encode())
+                clients[recipient].send(f'(DM) {nickname}: {dm_message}\n'.encode())
+                clients[nickname].send(f'***Sent DM to {recipient}: {dm_message}***\n'.encode())
             except:
-                clients[nickname].send(f"\n*** Failed to send DM to {recipient}. ***\n".encode())
+                clients[nickname].send(f"***Failed to send DM to {recipient}.***\n".encode())
         else:
-            clients[nickname].send("\n *** You cannot send a direct message to yourself. ***\n".encode())
+            clients[nickname].send("***You cannot send a direct message to yourself.***\n".encode())
     else: 
-        client_socket.send("\n ** User not found or offline. *** \n".encode())
+        client_socket.send("***User not found or offline.***\n".encode())
 
 # sending the message to all the (connected) clients except the message sender
 def broadcast(channel, message, sender_socket):

@@ -11,7 +11,7 @@ PORT = 3000
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((HOST, PORT))
 
-print("write '/quit' to quit,\n '/join *channelname*' to join a channel,\n and '/dm *nickname* *message*' to send a private message \n")
+print("'/quit' to quit,\n '/join *channelname*' to join a channel,\n and '/dm *nickname* *message*' to send a private message \n")
 nickname = input("Enter your nickname (and press enter to continue): ")
 
 # Sending the nickname to the server
@@ -49,9 +49,14 @@ def message_send():
             parts = message.split(' ', 2)
             if len(parts) >= 3:
                 recipient, dm_message = parts[1], parts[2]
-                client_socket.send(f'/dm {recipient} {dm_message}'.encode())
+                
+                # empty messages cannot be sent
+                if dm_message.strip():
+                    client_socket.send(f'/dm {recipient} {dm_message}'.encode())
+                else:
+                    print("\nEmpty message cannot be sent.")
             else:
-                print("Invalid /dm command format. Usage: /dm *nickname* *message*")
+                print("\nInvalid /dm command format. Usage: /dm *nickname* *message*")
 
         # handling the joining of channel(s)
         elif message.startswith('/join'):
@@ -61,11 +66,11 @@ def message_send():
                 client_socket.send(f'/join {new_channel}'.encode())
                 print(f"\nYou've joined the '{new_channel}' channel.")
             else:
-                print("Invalid /join command format. Usage: /join channel_name")
+                print("\nInvalid /join command format. Usage: /join channel_name")
         elif message.strip():
             client_socket.send(message.encode())
         else:
-            print("Empty message cannot be sent.")
+            print("\nEmpty message cannot be sent.")
 
 # creating the thread for receiving message and starting it
 receive_thread = threading.Thread(target=message_receive, args=(client_socket,))
