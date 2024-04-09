@@ -1,4 +1,4 @@
 # DistributedSystems_Course
 This is a repository for a distributed systmes course of my studies. 
 
-There's different folders for different assignments and information on how to run the codes are on the readme files of each folder. 
+There are different folders for the assignments and they have more information in their Readme files on how to run the codes. 
